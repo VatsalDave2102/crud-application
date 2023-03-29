@@ -1,0 +1,24 @@
+:root{
+    --primary-color: #ECF2FF;
+    --secondary-color: #3E54AC;
+    --sub-secondary-color: #655DBB;
+    --highlight-color: #BFACE2;
+}
+img[src = ''],img:not([src]){
+    opacity: 0;
+}
+img[src="*"]{
+    opacity: 1;
+}
+body{
+    background-color: var(--primary-color);
+}
+.navbar{
+    background-color: var(--highlight-color);
+}
+.product-form{
+    background-color: var(--highlight-color);
+}
+.btn{
+    background-color: var(--primary-color);
+}
