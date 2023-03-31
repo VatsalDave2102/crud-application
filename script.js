@@ -52,6 +52,13 @@ if (localStorage.getItem("products") == null) {
 // function for submitting product details
 submitBtn.addEventListener("click", () => {
   let input = retrieveData();
+  if(input.id == ''||input.name == '' ||input.price == ''||input.img==''||input.description==''){
+    Swal.fire(
+      'Fill the product details',
+      '',
+      'warning'
+    )
+  }else{
   allData.push(input);
   let dataString = JSON.stringify(allData);
   localStorage.setItem("products", dataString);
@@ -61,6 +68,7 @@ submitBtn.addEventListener("click", () => {
     'Your product details have been added',
     'success'
   )
+}
 });
 
 // retrieveing input data

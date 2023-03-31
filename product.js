@@ -53,7 +53,7 @@ for (let i = 0; i < allDeleteBtn.length; i++) {
         localStorage.setItem("products", JSON.stringify(allData));
         tr.remove();
         updateIndex();
-         
+
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       } else {
         Swal.fire("Operation cancelled");
@@ -74,7 +74,6 @@ function updateIndex() {
   allEditBtn = document.querySelectorAll(".edit-btn");
   allViewBtn = document.querySelectorAll(".view-btn");
 }
-
 
 // edit function
 let allEditBtn = document.querySelectorAll(".edit-btn");
@@ -188,8 +187,6 @@ for (let i = 0; i < allEditBtn.length; i++) {
     let price = document.querySelector("#productPrice");
     let description = document.querySelector("#productDesc");
     let updateBtn = document.querySelector(".update");
-
-    let previewContainer = document.querySelector(".preview-container");
     let imgPreview = document.querySelector(".img-preview");
     let previewText = document.querySelector(".img-preview-text");
 
@@ -213,12 +210,13 @@ for (let i = 0; i < allEditBtn.length; i++) {
         description: description.value,
       };
       console.log(allData[index]);
-      localStorage.setItem('products',JSON.stringify(allData))
-      td[0].innerHTML = allData[index].id
-      td[1].innerHTML = allData[index].name
-      td[2].innerHTML = allData[index].price
-      td[3].getElementsByTagName('img')[0].src = allData[index].img;
-      td[4].innerHTML = allData[index].description       
+      localStorage.setItem("products", JSON.stringify(allData));
+      td[0].innerHTML = allData[index].id;
+      td[1].innerHTML = allData[index].name;
+      td[2].innerHTML = allData[index].price;
+      td[3].getElementsByTagName("img")[0].src = allData[index].img;
+      td[4].innerHTML = allData[index].description;
+      Swal.fire("Successfully Changed", "", "success");
     };
   };
 }
@@ -228,7 +226,6 @@ let allViewBtn = document.querySelectorAll(".view-btn");
 console.log(allViewBtn);
 for (let i = 0; i < allViewBtn.length; i++) {
   allViewBtn[i].onclick = function () {
-     
     let tr = this.closest("tr");
     let td = tr.querySelectorAll("td");
     let index = tr.getAttribute("index");
@@ -278,7 +275,7 @@ function imgPreviewFunc() {
   let imgPreview = document.querySelector(".img-preview");
   let previewText = document.querySelector(".img-preview-text");
   let file = img.files[0];
-  let reader = new FileReader
+  let reader = new FileReader();
   if (file) {
     previewText.style.display = "none";
     imgPreview.style.display = "block";
@@ -290,5 +287,32 @@ function imgPreviewFunc() {
     previewText.style.display = null;
     imgPreview.style.display = null;
     imgPreview.setAttribute("src", "");
+  }
+}
+
+// search function
+let searchId = document.querySelector(".search-input");
+searchId.oninput = function () {
+  searchFunction();
+};
+
+function searchFunction() {
+  let tr = table.querySelectorAll("tr");
+
+  let filter = searchId.value.toLowerCase();
+  console.log(filter);
+  for (let i = 0; i < tr.length; i++) {
+    let td = tr[i].getElementsByTagName("td")[0];
+    let tdName = tr[i].getElementsByTagName("td")[1];
+    let id = td.innerHTML;
+    let name = tdName.innerHTML;
+    if (
+      id.toLowerCase().indexOf(filter) > -1 ||
+      name.toLowerCase().indexOf(filter) > -1
+    ) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
   }
 }
