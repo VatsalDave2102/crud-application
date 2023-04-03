@@ -228,7 +228,8 @@ for (let i = 0; i < allEditBtn.length; i++) {
         td[1].innerHTML = allData[index].name;
         td[2].innerHTML = allData[index].price;
         td[3].getElementsByTagName("img")[0].src = allData[index].img;
-        td[4].innerHTML = allData[index].description;
+        let truncatedDesc = truncate(allData[index].description, 20)
+        td[4].innerHTML = truncatedDesc;
         Swal.fire("Successfully Changed", "", "success");
       }
     };
