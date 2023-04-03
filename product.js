@@ -305,7 +305,7 @@ function imgPreviewFunc() {
 // search function
 let searchId = document.querySelector(".search-input");
 searchId.oninput = function () {
-  searchFunction();
+  debounceSearch()
 };
 
 function searchFunction() {
@@ -322,11 +322,26 @@ function searchFunction() {
       name.toLowerCase().indexOf(filter) > -1
     ) {
       tr[i].style.display = "";
+      noData.style.display = 'none'
     } else {
       tr[i].style.display = "none";
+      noData.style.display = 'block'
     }
   }
 }
+
+function debounce(fn, delay){
+  let timer;
+  return function(){
+    let context = this, args = arguments
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(context,args)
+    }, delay);
+  }
+}
+
+let debounceSearch = debounce(searchFunction, 500)
 
 // sorting function
 function sortTable(column, asc = true) {
