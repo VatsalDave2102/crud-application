@@ -74,3 +74,10 @@ body{
         left: 20%;
     }
 }
+span{
+    margin-left: 15px;
+    color: rgba(0, 0, 0, 0.5);
+}
+span:hover{
+    cursor: pointer;
+}

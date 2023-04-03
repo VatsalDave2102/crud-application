@@ -10,6 +10,7 @@
       integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="style.css" />
     <title>Product Management System</title>
@@ -43,38 +44,79 @@
       <h2>Product List</h2>
       <div class="row my-3">
         <div class="col">
-          <button type="button" class="btn">Clear Filter</button>
+          <button type="button" class="btn clear-filter">Clear Filter</button>
         </div>
         <div class="col">
           <form class="d-flex" role="search">
             <input
               class="form-control me-2 search-input"
               type="search"
-              placeholder="Search"
+              placeholder="Search products by id and name"
               aria-label="Search"
-            />
-            <button class="btn" type="submit">Search</button>
+            />            
           </form>
         </div>
       </div>
 
       <!-- Display table -->
+      <div class="table-responsive">
       <table
         class="table table-light table-hover text-center align-middle"
         id="table"
       >
+      <thead class="align-middle">
         <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Price</th>
+          <th scope="col">
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="">Id</div> 
+             <div class="d-flex flex-column">
+              <span class="material-symbols-outlined id-asc sorter" style="font-size: 25px;">
+                arrow_drop_up
+                </span>
+                <span class="material-symbols-outlined id-desc sorter" style="font-size: 25px;">
+                  arrow_drop_down
+                  </span>
+             </div>
+            </div>
+          </th>
+          <th scope="col">
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="">Name</div> 
+             <div class="d-flex flex-column">
+              <span class="material-symbols-outlined name-asc sorter" style="font-size: 25px;">
+                arrow_drop_up
+                </span>
+                <span class="material-symbols-outlined name-desc sorter" style="font-size: 25px;">
+                  arrow_drop_down
+                  </span>
+             </div>
+            </div>
+          </th>
+          <th scope="col">
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="">Price</div> 
+             <div class="d-flex flex-column">
+              <span class="material-symbols-outlined price-asc sorter" style="font-size: 25px;">
+                arrow_drop_up
+                </span>
+                <span class="material-symbols-outlined price-desc sorter" style="font-size: 25px;">
+                  arrow_drop_down
+                  </span>
+             </div>
+            </div>
+          </th>
           <th scope="col">Image</th>
           <th scope="col">Description</th>
           <th scope="col">Action</th>
         </tr>
+      </thead>
         <tbody class="tbody"></tbody>
       </table>
     </div>
-
+    </div>
+    <div class="flex justify-content-center no-data-container">  
+      <h1 class="no-data text-center">No data Available</h1>
+    </div>
     <!-- Edit-Modal -->
     <div
       class="modal fade"
@@ -82,6 +124,7 @@
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
+      data-bs-backdrop="static" data-bs-keyboard="false" 
     >
       <div class="modal-dialog modal-fullscreen-sm-down modal-lg">
         <div class="modal-content">

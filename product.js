@@ -1,29 +1,29 @@
 // variables
 let table = document.querySelector(".tbody");
+let th = document.querySelectorAll("th");
 let allData = [];
 allData = JSON.parse(localStorage.getItem("products"));
+let editModal = document.querySelector("#editModal");
+
+// truncate function for description
+function truncate(str, maxlength) {
+  return str.length > maxlength ? str.slice(0, maxlength - 1) + "…" : str;
+}
 
 // displaying data on page
 function getData() {
-  console.log(allData);
   allData.forEach((data, index) => {
+    let truncatedDesc = truncate(data.description, 20);
     table.innerHTML += `
       <tr index="${index}" class="tr">
             <td>${data.id}</td>
             <td>${data.name}</td>
             <td>${data.price}</td>
             <td><img src ="${data.img}" style="width:40px; height:40px"></td>
-            <td>${data.description}</td>
+            <td>${truncatedDesc}</td>
             <td>
-              <button
-                type="button"
-                class="btn view-btn"
-                data-bs-toggle="modal" 
-                data-bs-target="#viewModal" 
-              >
-                View
-              </button>
-              <button type="button" class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+              <button type="button" class="btn view-btn" data-bs-toggle="modal" data-bs-target="#viewModal">View</button>
+              <button type="button" class="btn edit-btn m-2 " data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
               <button type="button" class="btn delete-btn">Delete</button>
             </td>
           </tr>
@@ -34,10 +34,10 @@ getData();
 
 // delete function
 let allDeleteBtn = document.querySelectorAll(".delete-btn");
+// looping through all delete buttons and getting their closest table row then deleteting them from localStorage and DOM
 for (let i = 0; i < allDeleteBtn.length; i++) {
   allDeleteBtn[i].onclick = function () {
     let tr = this.closest("tr");
-    console.log(tr);
     let id = tr.getAttribute("index");
     Swal.fire({
       title: "Are you sure?",
@@ -49,11 +49,10 @@ for (let i = 0; i < allDeleteBtn.length; i++) {
     }).then((result) => {
       if (result.isConfirmed) {
         allData.splice(id, 1);
-        console.log(allData);
         localStorage.setItem("products", JSON.stringify(allData));
         tr.remove();
         updateIndex();
-
+        noDataMsg();
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       } else {
         Swal.fire("Operation cancelled");
@@ -68,7 +67,6 @@ function updateIndex() {
   let tr = document.querySelectorAll(".tr");
   for (let i = 0; i < tr.length; i++) {
     tr[i].setAttribute("index", i);
-    console.log(tr[i].getAttribute("index"));
   }
   allDeleteBtn = document.querySelectorAll(".delete-btn");
   allEditBtn = document.querySelectorAll(".edit-btn");
@@ -77,22 +75,20 @@ function updateIndex() {
 
 // edit function
 let allEditBtn = document.querySelectorAll(".edit-btn");
-console.log(allEditBtn);
 for (let i = 0; i < allEditBtn.length; i++) {
   allEditBtn[i].onclick = function () {
     let tr = this.closest("tr");
     let td = tr.querySelectorAll("td");
     let index = tr.getAttribute("index");
-    console.log(td);
 
     // getting values of selected product
-    let currid = td[0].innerHTML;
-    let currname = td[1].innerHTML;
-    let currprice = td[2].innerHTML;
-    let imgTag = td[3].getElementsByTagName("img");
-    let currimg = imgTag[0].src;
-    let currdescription = td[4].innerHTML;
+    let currid = allData[index].id;
+    let currname = allData[index].name;
+    let currprice = allData[index].price;
+    let currimg = allData[index].img;
+    let currdescription = allData[index].description;
 
+    // adding a modal to edit the product
     let editModal = document.querySelector(".edit-modal");
     editModal.innerHTML = `
     <div class="modal-body">
@@ -177,7 +173,7 @@ for (let i = 0; i < allEditBtn.length; i++) {
       >           
       Close
       </button>
-      <button type="button" class="btn update" data-bs-dismiss="modal">Save changes</button>
+      <button type="button" class="btn update">Save changes</button>
     </div>
         `;
 
@@ -201,41 +197,56 @@ for (let i = 0; i < allEditBtn.length; i++) {
 
     // updating product
     updateBtn.onclick = function () {
-      console.log(allData[index]);
-      allData[index] = {
-        id: id.value,
-        name: pname.value,
-        price: price.value,
-        img: imgPreview.src,
-        description: description.value,
-      };
-      console.log(allData[index]);
-      localStorage.setItem("products", JSON.stringify(allData));
-      td[0].innerHTML = allData[index].id;
-      td[1].innerHTML = allData[index].name;
-      td[2].innerHTML = allData[index].price;
-      td[3].getElementsByTagName("img")[0].src = allData[index].img;
-      td[4].innerHTML = allData[index].description;
-      Swal.fire("Successfully Changed", "", "success");
+      // checking if any input field is empty
+      if (
+        id.value == "" ||
+        pname.value == "" ||
+        price.value == "" ||
+        description.value == ""
+      ) {
+        Swal.fire("Fill the product details", "", "warning");
+      } //checking if all the fields are same as before
+      else if (    
+        allData[index].id == id.value &&
+        allData[index].name == pname.value &&
+        allData[index].price == price.value &&
+        allData[index].description == description.value &&
+        allData[index].img == imgPreview.src
+      ) {
+        Swal.fire("You haven't made any changes", "", "warning");
+      } //assigning new data and updating it in localStorage 
+      else {
+        allData[index] = {
+          id: id.value,
+          name: pname.value,
+          price: price.value,
+          img: imgPreview.src,
+          description: description.value,
+        };
+        localStorage.setItem("products", JSON.stringify(allData));
+        td[0].innerHTML = allData[index].id;
+        td[1].innerHTML = allData[index].name;
+        td[2].innerHTML = allData[index].price;
+        td[3].getElementsByTagName("img")[0].src = allData[index].img;
+        td[4].innerHTML = allData[index].description;
+        Swal.fire("Successfully Changed", "", "success");
+      }
     };
   };
 }
 
 // view function
 let allViewBtn = document.querySelectorAll(".view-btn");
-console.log(allViewBtn);
 for (let i = 0; i < allViewBtn.length; i++) {
   allViewBtn[i].onclick = function () {
     let tr = this.closest("tr");
     let td = tr.querySelectorAll("td");
     let index = tr.getAttribute("index");
-    console.log(td);
-    let id = td[0].innerHTML;
-    let name = td[1].innerHTML;
-    let price = td[2].innerHTML;
-    let imgTag = td[3].getElementsByTagName("img");
-    let img = imgTag[0].src;
-    let description = td[4].innerHTML;
+    let id = allData[index].id;
+    let name = allData[index].name;
+    let price = allData[index].price;
+    let img = allData[index].img;
+    let description = allData[index].description;
     let viewModal = document.querySelector(".view-modal");
     viewModal.innerHTML = `
     <div class="modal-body">
@@ -300,11 +311,10 @@ function searchFunction() {
   let tr = table.querySelectorAll("tr");
 
   let filter = searchId.value.toLowerCase();
-  console.log(filter);
   for (let i = 0; i < tr.length; i++) {
-    let td = tr[i].getElementsByTagName("td")[0];
+    let tdId = tr[i].getElementsByTagName("td")[0];
     let tdName = tr[i].getElementsByTagName("td")[1];
-    let id = td.innerHTML;
+    let id = tdId.innerHTML;
     let name = tdName.innerHTML;
     if (
       id.toLowerCase().indexOf(filter) > -1 ||
@@ -316,3 +326,130 @@ function searchFunction() {
     }
   }
 }
+
+// sorting function
+function sortTable(column, asc = true) {
+  // getting rows as array instead of nodelist for sort purpose
+  let direction = asc ? 1 : -1;
+  let rows = Array.from(table.querySelectorAll("tr"));
+
+  // sort each row
+  let sortedRow = rows.sort((a, b) => {
+    let acol = a.querySelector(`td:nth-child(${column + 1})`).innerHTML.trim();
+    let bcol = b.querySelector(`td:nth-child(${column + 1})`).innerHTML.trim();
+
+    return acol > bcol ? 1 * direction : -1 * direction;
+  });
+
+  // remove all existing TR from the table
+  while (table.firstChild) {
+    table.removeChild(table.firstChild);
+  }
+
+  // re-adding the childs
+  table.append(...sortedRow);
+
+  // remember how column is sorted
+  th.forEach((th) => th.classList.remove("th-sort-asc", "th-sort-desc"));
+  th[column].classList.toggle("th-sort-asc", asc);
+  th[column].classList.toggle("th-sort-desc", !asc);
+}
+
+let idAsc = document.querySelector(".id-asc");
+let idDesc = document.querySelector(".id-desc");
+let nameAsc = document.querySelector(".name-asc");
+let nameDesc = document.querySelector(".name-desc");
+let priceAsc = document.querySelector(".price-asc");
+let priceDesc = document.querySelector(".price-desc");
+
+let sortBtns = document.querySelectorAll(".sorter");
+for (let i = 0; i < sortBtns.length; i++) {
+  if (i == 0) {
+    sortBtns[0].onclick = function () {
+      sortTable(0, true);
+      idAsc.style.color = "rgba(0,0,0,1)";
+      idDesc.style.color = "rgba(0,0,0,0.5)";
+      nameDesc.style.color = "rgba(0,0,0,0.5)";
+      nameAsc.style.color = "rgba(0,0,0,0.5)";
+      priceAsc.style.color = "rgba(0,0,0,0.5)";
+      priceDesc.style.color = "rgba(0,0,0,0.5)";
+    };
+  }
+  if (i == 1) {
+    sortBtns[1].onclick = function () {
+      sortTable(0, false);
+      idAsc.style.color = "rgba(0,0,0,0.5)";
+      idDesc.style.color = "rgba(0,0,0,1)";
+      nameDesc.style.color = "rgba(0,0,0,0.5)";
+      nameAsc.style.color = "rgba(0,0,0,0.5)";
+      priceAsc.style.color = "rgba(0,0,0,0.5)";
+      priceDesc.style.color = "rgba(0,0,0,0.5)";
+    };
+  }
+  if (i == 2) {
+    sortBtns[2].onclick = function () {
+      sortTable(1, true);
+      idAsc.style.color = "rgba(0,0,0,0.5)";
+      idDesc.style.color = "rgba(0,0,0,0.5)";
+      nameDesc.style.color = "rgba(0,0,0,0.5)";
+      nameAsc.style.color = "rgba(0,0,0,1)";
+      priceAsc.style.color = "rgba(0,0,0,0.5)";
+      priceDesc.style.color = "rgba(0,0,0,0.5)";
+    };
+  }
+  if (i == 3) {
+    sortBtns[3].onclick = function () {
+      sortTable(1, false);
+      idAsc.style.color = "rgba(0,0,0,0.5)";
+      idDesc.style.color = "rgba(0,0,0,0.5)";
+      nameDesc.style.color = "rgba(0,0,0,1)";
+      nameAsc.style.color = "rgba(0,0,0,0.5)";
+      priceAsc.style.color = "rgba(0,0,0,0.5)";
+      priceDesc.style.color = "rgba(0,0,0,0.5)";
+    };
+  }
+  if (i == 4) {
+    sortBtns[4].onclick = function () {
+      sortTable(2, true);
+      idAsc.style.color = "rgba(0,0,0,0.5)";
+      idDesc.style.color = "rgba(0,0,0,0.5)";
+      nameDesc.style.color = "rgba(0,0,0,0.5)";
+      nameAsc.style.color = "rgba(0,0,0,0.5)";
+      priceAsc.style.color = "rgba(0,0,0,1)";
+      priceDesc.style.color = "rgba(0,0,0,0.5)";
+    };
+  }
+  if (i == 5) {
+    sortBtns[5].onclick = function () {
+      sortTable(2, false);
+      idAsc.style.color = "rgba(0,0,0,0,5)";
+      idDesc.style.color = "rgba(0,0,0,0.5)";
+      nameDesc.style.color = "rgba(0,0,0,0.5)";
+      nameAsc.style.color = "rgba(0,0,0,0.5)";
+      priceAsc.style.color = "rgba(0,0,0,0.5)";
+      priceDesc.style.color = "rgba(0,0,0,1)";
+    };
+  }
+}
+
+//  adding no data message
+let noData = document.querySelector(".no-data");
+
+function noDataMsg() {
+  console.log(table);
+  let tr = table.querySelectorAll("tr");
+  console.log(tr);
+  if (tr.length == 0) {
+    noData.style.display == "block";
+  } else {
+    noData.style.display = "none";
+  }
+}
+noDataMsg();
+
+// clear filter function
+let clearFilterBtn = document.querySelector(".clear-filter");
+clearFilterBtn.onclick = function () {
+  table.innerHTML = "";
+  getData();
+};

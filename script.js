@@ -58,6 +58,12 @@ submitBtn.addEventListener("click", () => {
       '',
       'warning'
     )
+  }else if(parseInt(input.price)== 0){
+    Swal.fire(
+      'Price of the product can not be 0',
+      '',
+      'warning'
+    )
   }else{
   allData.push(input);
   let dataString = JSON.stringify(allData);
@@ -84,7 +90,6 @@ function retrieveData() {
   product.name = pname.value;
   product.price = price.value;
   product.img = imgPreview.src;
-  console.log(reader);
   product.description = description.value;
   return product;
 }
@@ -101,4 +106,3 @@ function resetForm() {
   description.value = "";
   img.value = "";
 }
-
