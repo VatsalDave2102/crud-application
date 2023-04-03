@@ -441,7 +441,7 @@ function noDataMsg() {
   let tr = table.querySelectorAll("tr");
   console.log(tr);
   if (tr.length == 0) {
-    noData.style.display == "block";
+    noData.style.display = "block";
   } else {
     noData.style.display = "none";
   }
