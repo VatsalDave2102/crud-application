@@ -1,4 +1,7 @@
 # crud-application
+## Hosting link
+https://product-management-system-vatsal.netlify.app/
+
 This is a product management system which contains functionalities such as:
 
 ## 1. Add
